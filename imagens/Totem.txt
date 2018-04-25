@@ -1,0 +1,6 @@
+Fonte: Roboto Medium, 59pt, #FFFFFF
+Codigo hex cor Azul: #00a7e2
+Codigo hex cor Laranja: #e28421
+
+Tela de Inscrição
+Fonte Formulario: Roboto Thin, 35pt, #6b6b6b
