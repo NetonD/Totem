@@ -15,55 +15,65 @@ class Presenca(Toplevel):
         self.img = []
         self.arq = None
         self.cur = None
-        self.config(padx=160, pady=200)
         self.conectarBanco()
         self.matricula = None
-        ####### Label
-        lbl_matricula = Label(self, text="Matrícula:", font="Arial, 23", pady=62).grid(column=0, row=0, sticky=W)
-        lbl_nome = Label(self, text="Nome:", font="Arial, 23", pady=5).grid(column=0, row=3, columnspan=3, sticky=W)
-        lbl_facul = Label(self, text="Instituição:", font="Arial, 23").grid(column=0, row=5, columnspan=1, sticky=W)
-        lbl_curso = Label(self, text="Curso:", font="Arial, 23").grid(column=2, row=5, columnspan=2, sticky=W)
-        lbl_evento = Label(self, text="Evento:", font="Arial, 23", pady=5).grid(column=0, row=7, columnspan=3, sticky=W)
 
-        ####### Canvas
-        self.canvas1 = Canvas(self, width=670, height=5, bg='dodgerblue')
-        self.canvas1.grid(row=2, column=0, columnspan=3)
+        bg = Image.open("imagens\\fundo_inscricao.png").resize((940, 780), Image.ANTIALIAS)
+        self.bgtk = ImageTk.PhotoImage(bg)
+        Label(self, image=self.bgtk).place(x=0, y=0)
+
+        self.overrideredirect(1)
+
+
+        ####### Label
+        lbl_matricula = Label(self, text="Matrícula:", font="Arial, 18").grid(column=1, row=1, sticky=W)
+        lbl_nome = Label(self, text="Nome:", font="Arial, 18", pady=5).grid(column=1, row=4, columnspan=3, sticky=W)
+        lbl_facul = Label(self, text="Instituição:", font="Arial, 18").grid(column=1, row=6, columnspan=1, sticky=W)
+        lbl_curso = Label(self, text="Curso:", font="Arial, 18").grid(column=2, row=6, columnspan=2, sticky=W,padx=85)
+        lbl_evento = Label(self, text="Evento:", font="Arial, 18", pady=5).grid(column=1, row=8, columnspan=3, sticky=W)
+
+        Label(self, bg='#F0EEDE', height=1).grid(column=0, row=0, columnspan=3, pady=125)
+        Label(self, bg='#C4E2E3').grid(column=0, row=0, rowspan=13, padx=125)
 
         ####### Entry
         self.varMatricula = StringVar()
-        ent_matricula = Entry(self, width=16, textvariable=self.varMatricula, font="Arial, 16").grid(column=1, row=0,
-                                                                                                     padx=20, sticky=W)
+        ent_matricula = Entry(self, width=14, textvariable=self.varMatricula, font="Arial, 20").grid(column=2, row=1,
+                                                                                                      sticky=W)
+
+        self.varNome = StringVar()
+        ent_nome = Entry(self, state='disabled', textvariable=self.varNome, width=31, font="Arial, 20").grid(column=1,
+                                                                                                             row=5,
+                                                                                                             columnspan=3,
+                                                                                                             sticky=W)
+
         self.varCurso = StringVar()
-        ent_curso = Entry(self, state='disabled', textvariable=self.varCurso, width=23, font="Arial, 18").grid(column=2,
-                                                                                                               row=6,
-                                                                                                               columnspan=2,
+        ent_curso = Entry(self, state='disabled', textvariable=self.varCurso, width=17, font="Arial, 20").grid(column=2,
+                                                                                                               row=7,
+                                                                                                               columnspan=3,
+                                                                                                               padx=85,
                                                                                                                sticky=W)
         self.varFacul = StringVar()
-        ent_facul = Entry(self, state='disabled', textvariable=self.varFacul, width=23, font="Arial, 18").grid(column=0,
-                                                                                                               row=6,
+        ent_facul = Entry(self, state='disabled', textvariable=self.varFacul, width=12, font="Arial, 20").grid(column=1,
+                                                                                                               row=7,
                                                                                                                columnspan=2,
                                                                                                                sticky=W)
-        self.varNome = StringVar()
-        ent_nome = Entry(self, state='disabled', textvariable=self.varNome, width=23, font="Arial, 18").grid(column=0,
-                                                                                                             row=4,
-                                                                                                             columnspan=2,
-                                                                                                             sticky=W)
+
 
         ####### Menu Option
         self.variavel = StringVar()
         self.variavel.set("Nenhum Selecionado")
         opcoes = {str(i) for i in tratarResultado(self.getEventos())}
         menuOption = OptionMenu(self, self.variavel, *opcoes)
-        menuOption.config(width=59, font="Arial, 15")
-        menuOption.grid(row=8, column=0, columnspan=3, sticky=W)
+        menuOption.config(width=39, font="Arial, 15")
+        menuOption.grid(row=9, column=1, columnspan=3, sticky=W)
         menu = self.nametowidget(menuOption.menuname)
         menu.config(font="Arial, 15")
 
         ####### Button
-        btn_checkin = self.make_button_img(180, 87, "imagens\\checkin_button.png", self.checkin, 0, 0, 9, W)
-        btn_checkout = self.make_button_img(180, 87, "imagens\\checkout_button.png", self.checkout, 1, 2, 9, W)
-        btn_cancel = self.make_button_img(180, 87, "imagens\\cancel_button.png", self.onClose, 2, 1, 9, W)
-        btn_buscar = self.make_button_img(180, 87, "imagens\\search_button.png", self.completarCampos, 3, 2, 0, W)
+        btn_checkin = self.make_button_img(120, 40, "imagens\\botao_checkin.png", self.checkin, 0, 1, 10, W)
+        btn_checkout = self.make_button_img(120, 40, "imagens\\botao_checkin.png", self.checkout, 1, 3, 10, W)
+        btn_cancel = self.make_button_img(120, 40, "imagens\\botao_cancelar.png", self.onClose, 2, 2, 10, W)
+        btn_buscar = self.make_button_img(120, 40, "imagens\\botao_buscar.png", self.completarCampos, 3, 3, 1, W)
 
     def buscar(self):
         aluno = self.cur.execute("select Alunos.nome,Instituição.nome,cursos.nome "
@@ -148,7 +158,7 @@ class Presenca(Toplevel):
     def make_button_img(self, w, h, url, func, pos, col, row, alinhamento):
         self.arq = Image.open(url).resize((w, h), Image.ANTIALIAS)
         self.img.append(ImageTk.PhotoImage(self.arq))
-        return Button(self, image=self.img[pos], height=h, width=w, command=func).grid(column=col, row=row, pady=5,
+        return Button(self, image=self.img[pos], height=h, width=w, command=func,borderwidth=0).grid(column=col, row=row, pady=15,
                                                                                        sticky=alinhamento)
 
     def onClose(self):

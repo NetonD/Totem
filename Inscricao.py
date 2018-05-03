@@ -14,7 +14,8 @@ class Inscricao(Toplevel):
         self.img = []
         self.arq = None
         self.cur = None
-        bg = Image.open("imagens\\inscreva-se3.jpg").resize((940,780),Image.ANTIALIAS)
+
+        bg = Image.open("imagens\\fundo_inscricao.png").resize((940,780),Image.ANTIALIAS)
         self.bgtk = ImageTk.PhotoImage(bg)
         Label(self,image=self.bgtk).place(x=0,y=0)
 
@@ -34,8 +35,9 @@ class Inscricao(Toplevel):
         Label(self,text="Instituição:",font="Arial, 18").grid(column=1,row=6,sticky=W)
         Label(self,text="Curso:",font="Arial, 18").grid(column=1,row=8,sticky=W)
         Label(self,text="Eventos:",font="Arial, 18").grid(column=1,row=10,sticky=W)
-        Label(self,bg='#01A7E3',height=1).grid(column=0, row=0, columnspan=3, pady=125)
-        Label(self,bg='#01A7E3').grid(column=0,row=0,rowspan=13,padx=125)
+
+        Label(self,bg='#F0EEDE',height=1).grid(column=0, row=0, columnspan=3, pady=125)
+        Label(self,bg='#C4E2E3').grid(column=0,row=0,rowspan=13,padx=125)
 
         ######## Entry
         self.varNome = StringVar()
@@ -48,8 +50,8 @@ class Inscricao(Toplevel):
         ent_celular = Entry(self,width=17, font="Arial, 20",textvariable=self.varCelular).grid(row=5,column=2,stick=W,padx=14)
 
         ######## Buttons
-        btn_cancel = self.make_button_img(160,95,"imagens\\cancel_button.png",self.onClose,0,1,12,W)
-        btn_concluir = self.make_button_img(160,96,"imagens\\confirm_button.png",self.cadastrar,1,2,12,E)
+        btn_cancel = self.make_button_img(160,95,"imagens\\botao_cancelar.png",self.onClose,0,1,12,W)
+        btn_concluir = self.make_button_img(160,96,"imagens\\botao_confirmar.png",self.cadastrar,1,2,12,E)
 
         ######## Lista insttituições
 
