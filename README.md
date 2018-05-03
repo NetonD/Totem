@@ -1,7 +1,7 @@
 # Totem
 - Requisitos
 - Instalção 
-- Uso
+
 
 ## Requisitos
 
@@ -13,4 +13,8 @@
 1. Baixe os arquivos ou clone o repositorio
 2. Execute o data_base_tables.sql em seu Sql server
 3. Insira o login, dns do servidor e senha nas variaveis LOGIN, SENHA, SERVIDOR
+4. Execute o comando: python Home.py 
+
+
+
 
