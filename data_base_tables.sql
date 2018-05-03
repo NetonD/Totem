@@ -1,3 +1,4 @@
+create Database teste
 create table Instituição(
 	nome varchar(40) NOT NULL,
 	endereço varchar(40) NOT NULL,

@@ -3,7 +3,9 @@ import pyodbc
 from PIL import Image,ImageTk
 from tkinter import messagebox
 from auxiliares import tratarResultado
-
+LOGIN = ""
+SENHA = ""
+SERVIDOR = ""
 
 class Inscricao(Toplevel):
     def __init__(self,original):
@@ -92,7 +94,7 @@ class Inscricao(Toplevel):
 
 
     def conectarBanco(self):
-        con = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server};server=DESKTOP-CO1I2QA;database=teste;uid=sa;pwd=150971nt")
+        con = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server};server="+str(SERVIDOR)+";database=teste;uid="+str(LOGIN)+";pwd="+str(SENHA))
         self.cur = con.cursor()
 
 
@@ -144,7 +146,7 @@ class Inscricao(Toplevel):
             print(evento) #######
             if not nome or not email or evento == "Nenhum selecionado": raise Exception
 
-            con = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server};server=DESKTOP-CO1I2QA;database=teste;uid=sa;pwd=150971nt")
+            con = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server};server="+str(SERVIDOR)+";database=teste;uid="+str(LOGIN)+";pwd="+str(SENHA))
             cur = con.cursor()
             id_curso = tratarResultado(cur.execute("select id_curso from cursos where nome = (?)",curso).fetchone())
             id_facul = tratarResultado(cur.execute("select id_faculdade from instituição where nome = (?)",facul).fetchone())

@@ -4,7 +4,9 @@ from auxiliares import tratarResultado, isNumber
 from PIL import Image, ImageTk
 from tkinter import messagebox
 from datetime import datetime
-
+LOGIN = "sa"
+SENHA = "150971nt"
+SERVIDOR = ""
 
 class Presenca(Toplevel):
     def __init__(self, original):
@@ -99,9 +101,7 @@ class Presenca(Toplevel):
             messagebox.showinfo("Alerta", "Campo obrigatorio para busca")
 
     def conectarBanco(self):
-        self.cur = pyodbc.connect(
-            "Driver={ODBC Driver 13 for SQL Server};server=DESKTOP-CO1I2QA;database=teste;uid=sa;pwd=150971nt").cursor()
-
+        self.cur = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server};server="+str(SERVIDOR)+";database=teste;uid="+str(LOGIN)+";pwd="+str(SENHA))
     def checkin(self):
         try:
             veri = self.cur.execute("select %s.id_aluno "
