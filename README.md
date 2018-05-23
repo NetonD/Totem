@@ -1,4 +1,4 @@
-# Totem
+ # Totem
 - Requisitos
 - Instalção 
 
@@ -24,4 +24,4 @@
 
 
 *OBSERVAÇÕES:
--Para conectar remotamente o programa utiliza a porta 1433
+- Para conectar remotamente o programa utiliza a porta 1433
