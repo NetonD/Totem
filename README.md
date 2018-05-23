@@ -18,7 +18,8 @@
 4. Vá até os arquivos "Presença.py" e "Inscricao.py"
 - Altere as variaveis BANCO, SENHA , LOGIN, SERVIDOR
 - Repita isso nos 2 arquivos
-5.PRONTO! Execute o comando python home.py na pasta dos arquivos
+
+5. PRONTO! Execute o comando python home.py na pasta dos arquivos
 
 
 
