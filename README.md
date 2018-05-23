@@ -23,3 +23,5 @@
 
 
 
+*OBSERVAÇÕES:
+-Para conectar remotamente o programa utiliza a porta 1433
