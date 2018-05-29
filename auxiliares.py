@@ -17,13 +17,13 @@ class Exceptn(Exception):
     def __str__(self):
         print(type(self.campo))
         return repr(self.campo)
-
+def string2int(lista):
+    for i in range(len(lista)):
+        lista[i] = int(lista[i])
+    return lista
 
 def isNumber(valor):
     try:
         int(valor)
     except:
         raise ValueError
-
-
-

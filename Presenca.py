@@ -5,9 +5,9 @@ from PIL import Image, ImageTk
 from tkinter import messagebox
 from datetime import datetime
 LOGIN = "sa"
-SENHA = "150971nt"
-SERVIDOR = ""
-
+SENHA = "Almir@lves123"
+SERVIDOR = "WIN-6TQA8GRP8MK"
+BANCO = "Totem"
 class Presenca(Toplevel):
     def __init__(self, original):
         self.original_frame = original
@@ -98,10 +98,11 @@ class Presenca(Toplevel):
         except ValueError:
             messagebox.showinfo("Alerta", "Insira somente numeros")
         except:
-            messagebox.showinfo("Alerta", "Campo obrigatorio para busca")
+            messagebox.showinfo("Alerta", "Campo obrigatorio para busca.\nVerifique e tente novamente!")
 
     def conectarBanco(self):
-        self.cur = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server};server="+str(SERVIDOR)+";database=teste;uid="+str(LOGIN)+";pwd="+str(SENHA))
+        self.cur = pyodbc.connect('DRIVER={SQL Server};SERVER='+str(SERVIDOR)+';PORT=1433;DATABASE='+str(BANCO)+';UID='+str(LOGIN)+';PWD='+str(SENHA)+';')
+
     def checkin(self):
         try:
             veri = self.cur.execute("select %s.id_aluno "

@@ -2,10 +2,13 @@ from tkinter import *
 import pyodbc
 from PIL import Image,ImageTk
 from tkinter import messagebox
-from auxiliares import tratarResultado
-LOGIN = ""
-SENHA = ""
-SERVIDOR = ""
+from auxiliares import tratarResultado,string2int
+
+#PRETENDO DEIXAR ISSO MAIS FACIL PARA INSTALAÇÃO
+LOGIN = "sa"
+SENHA = "Almir@lves123"
+SERVIDOR = "WIN-6TQA8GRP8MK"
+BANCO = "Totem"
 
 class Inscricao(Toplevel):
     def __init__(self,original):
@@ -22,11 +25,10 @@ class Inscricao(Toplevel):
         Label(self,image=self.bgtk).place(x=0,y=0)
 
         self.overrideredirect(1)
-        self.wm_attributes("-topmost", True)
+        #self.wm_attributes("-topmost", True)
         #self.wm_attributes("-transparentcolor", "somecolor")
 
         self.conectarBanco()
-
 
         ######## Label
 
@@ -94,8 +96,9 @@ class Inscricao(Toplevel):
 
 
     def conectarBanco(self):
-        con = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server};server="+str(SERVIDOR)+";database=teste;uid="+str(LOGIN)+";pwd="+str(SENHA))
+        con = pyodbc.connect('DRIVER={SQL Server};SERVER='+str(SERVIDOR)+';PORT=1433;DATABASE='+str(BANCO)+';UID='+str(LOGIN)+';PWD='+str(SENHA)+';')
         self.cur = con.cursor()
+
 
 
     def make_button_img(self, w, h, url, func, pos, col,row,alinhamento):
@@ -112,7 +115,7 @@ class Inscricao(Toplevel):
             cursos = self.cur.execute("select nome from Cursos").fetchall()
             return cursos
         except:
-            log = open("logerro.txt",'w')
+            log = open("logerro.txt",'rb')
             log.write("Erro com conexao banco ao listar cursos")
 
 
@@ -121,8 +124,9 @@ class Inscricao(Toplevel):
             eventos = self.cur.execute("select nome from Eventos").fetchall()
             return eventos
         except:
-            log = open("logerro.txt",'w')
+            log = open("logerro.txt",'rb')
             log.write("Erro com conexao banco ao listar eventos")
+
 
 
     def getFaculdade(self):
@@ -130,7 +134,7 @@ class Inscricao(Toplevel):
             fauldades = self.cur.execute("select nome from Instituição").fetchall()
             return fauldades
         except:
-            log = open("logerro.txt",'w')
+            log = open("logerro.txt",'rb')
             log.write("Erro com conexao banco ao listar eventos")
 
 
@@ -143,28 +147,40 @@ class Inscricao(Toplevel):
             facul = self.variavel.get()
             curso = self.var.get()
             evento = self.variable.get()
-            print(evento) #######
+
             if not nome or not email or evento == "Nenhum selecionado": raise Exception
 
-            con = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server};server="+str(SERVIDOR)+";database=teste;uid="+str(LOGIN)+";pwd="+str(SENHA))
+            con = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server};server="+str(SERVIDOR)+";database="+str(BANCO)+";uid="+str(LOGIN)+";pwd="+str(SENHA))
             cur = con.cursor()
             id_curso = tratarResultado(cur.execute("select id_curso from cursos where nome = (?)",curso).fetchone())
             id_facul = tratarResultado(cur.execute("select id_faculdade from instituição where nome = (?)",facul).fetchone())
 
+            cadastro_aluno =  tratarResultado(cur.execute('select matricula from Alunos'))
+            aluno_evento = tratarResultado(cur.execute('select id_aluno from "%s"'%evento))
+            aluno_evento = string2int(aluno_evento)
+            cadastro_aluno = string2int(cadastro_aluno)
 
-            cur.execute("insert into Alunos(nome,email,matricula,telefone,id_instituição,id_cursos) values (?, ?, ?, ?, ?, ?)",(nome,email,matricula,telefone,id_facul[0],id_curso[0]))
-            cur.execute("insert into %s values (?,?,0,0)"%evento,matricula,nome)
-            con.commit()
-            messagebox.showinfo("Sucesso","Cadastro efetuado com sucesso!")
-            self.onClose()
+
+            print(cadastro_aluno) ###########
+            print(matricula in cadastro_aluno)
+
+            if not matricula in cadastro_aluno:
+                cur.execute("insert into Alunos(nome,email,matricula,telefone,id_instituição,id_cursos) values (?, ?, ?, ?, ?, ?)",(nome,email,matricula,telefone,id_facul[0],id_curso[0]))
+
+            if not matricula in aluno_evento:
+                cur.execute('insert into "%s" values (?,?,0,0)'%evento,matricula,nome)
+                con.commit()
+                messagebox.showinfo("Sucesso","Cadastro efetuado com sucesso!")
+                self.onClose()
+            else: messagebox.showinfo("Alerta","Você já está cadastrado(a) no evento.")
         except pyodbc.IntegrityError:
             messagebox.showinfo("Alerta","Você já está cadastrado(a)")
         except UnboundLocalError:
-            print("Nao")#####
+            print("Linha 170")#####
         except pyodbc.ProgrammingError as e:
-            print("Nao")######
-            print(e)
+            print("Linha 170")######
         except ValueError as e:
             messagebox.showinfo("ERRO", "Verifique os campos: Matricula e Telefone")
-        except Exception:
+        except Exception as e:
             messagebox.showinfo("ERRO","Não pode haver campos vazios")
+            print(e)

@@ -4,7 +4,7 @@ from Presenca import *
 from Inscricao import *
 
 class Home(object):
-    
+
     def __init__(self,parent):
         self.root = parent
         self.root.title("Home")
