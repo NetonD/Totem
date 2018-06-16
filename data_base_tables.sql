@@ -14,10 +14,10 @@ create table Cursos(
     foreign key(id_faculdade) references Instituição
 );
 create table Alunos(
-	nome varchar(50) NOT NULL,
-	matricula int,
-    email varchar(50) not null,
-    telefone int NOT NULL,
+	nome varchar(60) NOT NULL,
+	matricula bigint,
+    email varchar(60) not null,
+    telefone varchar(11) NOT NULL,
 	id_cursos int NOT NULL,
 	id_instituição int NOT NULL,
 	primary key(matricula),
