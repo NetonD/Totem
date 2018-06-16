@@ -4,10 +4,10 @@ from auxiliares import tratarResultado, isNumber
 from PIL import Image, ImageTk
 from tkinter import messagebox
 from datetime import datetime
-LOGIN = "sa"
+LOGIN = "Neto"
 SENHA = "Almir@lves123"
-SERVIDOR = "WIN-6TQA8GRP8MK"
-BANCO = "Totem"
+SERVIDOR = "totem-bd.database.windows.net"
+BANCO = "BD_TOTEM"
 class Presenca(Toplevel):
     def __init__(self, original):
         self.original_frame = original
