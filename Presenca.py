@@ -9,15 +9,14 @@ SENHA = "Almir@lves123"
 SERVIDOR = "totem-bd.database.windows.net"
 BANCO = "BD_TOTEM"
 class Presenca(Toplevel):
-    def __init__(self, original):
+    def __init__(self, original,curs):
         self.original_frame = original
         Toplevel.__init__(self)
         self.title("Inscricao")
         self.geometry("940x780+30+30")
         self.img = []
         self.arq = None
-        self.cur = None
-        self.conectarBanco()
+        self.cur = curs
         self.matricula = None
 
         bg = Image.open("imagens\\fundo_inscricao.png").resize((940, 780), Image.ANTIALIAS)
@@ -100,19 +99,18 @@ class Presenca(Toplevel):
         except:
             messagebox.showinfo("Alerta", "Campo obrigatorio para busca.\nVerifique e tente novamente!")
 
-    def conectarBanco(self):
-        self.cur = pyodbc.connect('DRIVER={SQL Server};SERVER='+str(SERVIDOR)+';PORT=1433;DATABASE='+str(BANCO)+';UID='+str(LOGIN)+';PWD='+str(SENHA)+';')
-
     def checkin(self):
         try:
-            veri = self.cur.execute("select %s.id_aluno "
-                                    "from alunos,%s "
-                                    "where %s.id_aluno = %i" % (self.variavel.get(), self.variavel.get(), self.variavel.get(), self.matricula))
+            if self.variavel.get() == "Nenhum Selecionado": raise Exception
+            print('kkkkk')
+            veri = self.cur.execute('select "%s".id_aluno '
+                                    'from alunos,"%s" '
+                                    'where "%s".id_aluno = %i' % (self.variavel.get(), self.variavel.get(), self.variavel.get(), self.matricula))
             dado = veri.fetchone()
             if not dado:
                 messagebox.showinfo("Alerta", "Voce não está inscrito nesse evento")
             elif datetime.now().time() > self.getHora('inicio'):
-                self.cur.execute("update %s set checkin=1 where %s.id_aluno = %i" % (
+                self.cur.execute('update %s set checkin=1 where "%s".id_aluno = %i' % (
                     self.variavel.get(), self.variavel.get(), self.matricula))
                 self.cur.execute("commit")
                 messagebox.showinfo("Sucesso", "Checkin realizado com sucesso")
@@ -120,26 +118,32 @@ class Presenca(Toplevel):
             else:
                 messagebox.showinfo("Alerta", "Aguarde o horario correto")
         except pyodbc.ProgrammingError:
+            messagebox.showinfo("Alerta","Contate suporte")
+        except Exception as e:
             messagebox.showinfo("Alerta","Selecione um evento")
-
+            print(e)
 
     def checkout(self):
         try:
-            veri = self.cur.execute("select %s.id_aluno "
-                                    "from alunos,%s "
-                                    "where %s.id_aluno = %i" % (self.variavel.get(), self.variavel.get(), self.variavel.get(), self.matricula))
+            if self.variavel.get() == 'Nenhum Selecionado': raise Exception
+            veri = self.cur.execute('select "%s".id_aluno '
+                                    'from alunos,"%s" '
+                                    'where "%s".id_aluno = %i' % (self.variavel.get(), self.variavel.get(), self.variavel.get(), self.matricula))
             dado = veri.fetchone()
             if not dado:
                 messagebox.showinfo("Alerta", "Voce não está inscrito nesse evento")
             elif datetime.now().time() < self.getHora('final'):
-                self.cur.execute("update %s set checkout=1 where %s.id_aluno = %i" % (
+                self.cur.execute('update "%s" set checkout=1 where "%s".id_aluno = %i' % (
                     self.variavel.get(), self.variavel.get(), self.matricula))
                 self.cur.execute("commit")
                 messagebox.showinfo("Sucesso","Checkout realizado com sucesso")
                 self.onClose()
             else:
                 messagebox.showinfo("Alerta", "Aguarde o horario correto")
-        except pyodbc.ProgrammingError:
+        except pyodbc.ProgrammingError as e:
+            messagebox.showinfo("Erro","Contate suporte")
+            print(e)
+        except Exception as e:
             messagebox.showinfo("Alerta","Selecione um evento")
 
     #################################### FAZER BUTTON CHECKOUT
@@ -155,7 +159,15 @@ class Presenca(Toplevel):
         hora = self.cur.execute("select hora_%s "
                                 "from eventos "
                                 "where nome = '%s'" % (ficio,self.variavel.get())).fetchone()
-        return hora[0]
+        
+        hora = hora[0].split(':')
+        hora[2] = hora[2].split('.')
+        del hora[2][1]
+        hora[2] = hora[2][0]
+        
+        hora = hora[0]+':'+ hora[1] + ':' + hora[2]
+        
+        return datetime.strptime(hora,'%H:%M:%S').time()
     def make_button_img(self, w, h, url, func, pos, col, row, alinhamento):
         self.arq = Image.open(url).resize((w, h), Image.ANTIALIAS)
         self.img.append(ImageTk.PhotoImage(self.arq))

@@ -3,6 +3,11 @@ from PIL import Image,ImageTk
 from Presenca import *
 from Inscricao import *
 
+LOGIN = "Neto"
+SENHA = "Almir@lves123"
+SERVIDOR = "totem-bd.database.windows.net"
+BANCO = "BD_TOTEM"
+
 class Home(object):
 
     def __init__(self,parent):
@@ -12,8 +17,10 @@ class Home(object):
         self.frame.grid()
         self.arq = None
         self.img = []
+        self.cur = self.conectarBanco()
 
-
+        
+        
         self.img.append(ImageTk.PhotoImage(Image.open('imagens\\fundo_sem_icone2.png').resize((940,780),Image.ANTIALIAS)))
         Label(self.root, image=self.img[0]).place(x=0, y=0,relwidth=1)
         btn_inscricao = self.make_button_img(self.root,200,200,"imagens\\inscricao.png",self.open_inscricao,1,0)
@@ -42,11 +49,15 @@ class Home(object):
 
     def open_inscricao(self):
         self.hiden()
-        subframe = Inscricao(self)
+        subframe = Inscricao(self,self.cur)
+
     def open_presenca(self):
         self.hiden()
-        Presenca(self)
+        Presenca(self,self.cur)
 
+    def conectarBanco(self):
+        con = pyodbc.connect('DRIVER={SQL Server};SERVER='+str(SERVIDOR)+';PORT=1433;DATABASE='+str(BANCO)+';UID='+str(LOGIN)+';PWD='+str(SENHA)+';')
+        return con.cursor()
 
 root= Tk()
 root.geometry("940x780+30+30")

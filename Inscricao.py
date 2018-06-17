@@ -11,14 +11,14 @@ SERVIDOR = "totem-bd.database.windows.net"
 BANCO = "BD_TOTEM"
 
 class Inscricao(Toplevel):
-    def __init__(self,original):
+    def __init__(self,original,curs):
         self.original_frame = original
         Toplevel.__init__(self)
         self.title("Inscricao")
         self.geometry("940x780+30+30")
         self.img = []
         self.arq = None
-        self.cur = None
+        self.cur = curs
 
         bg = Image.open("imagens\\fundo_inscricao.png").resize((940,780),Image.ANTIALIAS)
         self.bgtk = ImageTk.PhotoImage(bg)
@@ -28,7 +28,7 @@ class Inscricao(Toplevel):
         #self.wm_attributes("-topmost", True)
         #self.wm_attributes("-transparentcolor", "somecolor")
 
-        self.conectarBanco()
+        
 
         ######## Label
 
@@ -94,13 +94,6 @@ class Inscricao(Toplevel):
         self.destroy()
         self.original_frame.show()
 
-
-    def conectarBanco(self):
-        con = pyodbc.connect('DRIVER={SQL Server};SERVER='+str(SERVIDOR)+';PORT=1433;DATABASE='+str(BANCO)+';UID='+str(LOGIN)+';PWD='+str(SENHA)+';')
-        self.cur = con.cursor()
-
-
-
     def make_button_img(self, w, h, url, func, pos, col,row,alinhamento):
         self.arq = Image.open(url).resize((w, h), Image.ANTIALIAS)
         self.img.append(ImageTk.PhotoImage(self.arq))
@@ -150,26 +143,23 @@ class Inscricao(Toplevel):
 
             if not nome or not email or evento == "Nenhum selecionado": raise Exception
 
-            con = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server};server="+str(SERVIDOR)+";database="+str(BANCO)+";uid="+str(LOGIN)+";pwd="+str(SENHA))
-            cur = con.cursor()
-            id_curso = tratarResultado(cur.execute("select id_curso from cursos where nome = (?)",curso).fetchone())
-            id_facul = tratarResultado(cur.execute("select id_faculdade from instituição where nome = (?)",facul).fetchone())
+            #con = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server};server="+str(SERVIDOR)+";database="+str(BANCO)+";uid="+str(LOGIN)+";pwd="+str(SENHA))
+            #cur = con.cursor()
+            id_curso = tratarResultado(self.cur.execute("select id_curso from cursos where nome = (?)",curso).fetchone())
+            id_facul = tratarResultado(self.cur.execute("select id_faculdade from instituição where nome = (?)",facul).fetchone())
 
-            cadastro_aluno =  tratarResultado(cur.execute('select matricula from Alunos'))
-            aluno_evento = tratarResultado(cur.execute('select id_aluno from "%s"'%evento))
+            cadastro_aluno =  tratarResultado(self.cur.execute('select matricula from Alunos'))
+            aluno_evento = tratarResultado(self.cur.execute('select id_aluno from "%s"'%evento))
             aluno_evento = string2int(aluno_evento)
             cadastro_aluno = string2int(cadastro_aluno)
 
 
-            print(cadastro_aluno) ###########
-            print(matricula in cadastro_aluno)
-
             if not matricula in cadastro_aluno:
-                cur.execute("insert into Alunos(nome,email,matricula,telefone,id_instituição,id_cursos) values (?, ?, ?, ?, ?, ?)",(nome,email,matricula,telefone,id_facul[0],id_curso[0]))
+                self.cur.execute("insert into Alunos(nome,email,matricula,telefone,id_instituição,id_cursos) values (?, ?, ?, ?, ?, ?)",(nome,email,matricula,telefone,id_facul[0],id_curso[0]))
 
             if not matricula in aluno_evento:
-                cur.execute('insert into "%s" values (?,?,0,0)'%evento,matricula,nome)
-                con.commit()
+                self.cur.execute('insert into "%s" values (?,?,0,0)'%evento,matricula,nome)
+                self.cur.execute('commit')
                 messagebox.showinfo("Sucesso","Cadastro efetuado com sucesso!")
                 self.onClose()
             else: messagebox.showinfo("Alerta","Você já está cadastrado(a) no evento.")
