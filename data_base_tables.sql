@@ -1,4 +1,4 @@
-create Database teste
+﻿create Database teste
 create table Instituição(
 	nome varchar(40) NOT NULL,
 	endereço varchar(40) NOT NULL,
@@ -36,7 +36,7 @@ create table Eventos(
 );
 
 create table "Nome Evento"(
-    id_aluno int,
+    id_aluno bigint,
     nome_aluno varchar(50) NOT null,
     checkin bit,
     checkout bit,
