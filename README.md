@@ -21,5 +21,5 @@
  - python Home.py
 
 video ensinando a instalar e usar:
-
+-https://www.youtube.com/watch?v=O5IQWX4OzA4&feature=youtu.be
 
