@@ -22,5 +22,6 @@
  - cd "caminho da pasta"
  - python Home.py
 
+video ensinando a instalar e usar:
 
 
