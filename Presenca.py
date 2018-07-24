@@ -112,8 +112,6 @@ class Presenca(Toplevel):
                 self.onClose()
             else:
                 messagebox.showinfo("Alerta", "Aguarde o horario correto")
-        except pyodbc.ProgrammingError:
-            messagebox.showinfo("Alerta","Contate suporte")
         except Exception as e:
             messagebox.showinfo("Alerta","Selecione um evento")
             raise e
@@ -136,9 +134,6 @@ class Presenca(Toplevel):
                 self.onClose()
             else:
                 messagebox.showinfo("Alerta", "Aguarde o horario correto")
-        except pyodbc.ProgrammingError as e:
-            messagebox.showinfo("Erro","Contate suporte")
-            print(e)
         except Exception as e:
             messagebox.showinfo("Alerta","Selecione um evento")
             raise e

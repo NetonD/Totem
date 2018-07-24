@@ -1,4 +1,3 @@
-import pyodbc
 def tratarResultado(ob):
     lista = []
     for row in ob:

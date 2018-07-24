@@ -1,5 +1,4 @@
 from tkinter import *
-import pyodbc
 from PIL import Image,ImageTk
 from tkinter import messagebox
 from auxiliares import tratarResultado,string2int
@@ -158,11 +157,11 @@ class Inscricao(Toplevel):
                 messagebox.showinfo("Sucesso","Cadastro efetuado com sucesso!")
                 self.onClose()
             else: messagebox.showinfo("Alerta","Você já está cadastrado(a) no evento.")
-        except pyodbc.IntegrityError:
+        except sqlite.IntegrityError:
             messagebox.showinfo("Alerta","Você já está cadastrado(a)")
         except UnboundLocalError:
             print("Linha 170")#####
-        except pyodbc.ProgrammingError as e:
+        except sqlite.ProgrammingError as e:
             print("Linha 170")######
         except ValueError as e:
             messagebox.showinfo("ERRO", "Verifique os campos: Matricula e Telefone")
