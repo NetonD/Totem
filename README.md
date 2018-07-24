@@ -6,9 +6,7 @@
 ## Requisitos
 
 - Pillow >= 5.1.0
-- Pyodbc >= 4.0.23
 - Tkinter >= 8.6.7
-- Sql Server 2017+
 - Python 3.6
 
 ## Instalação
