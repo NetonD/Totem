@@ -12,16 +12,15 @@
 - Python 3.6
 
 ## Instalação
-1. Baixe os arquivos ou clone o repositorio
-2. No arquivo "data_base_tables.sql" está a estrutura do banco
-3. Execute os comandos para criar a parte fisica do banco
-4. Vá até os arquivos "Presença.py" e "Inscricao.py"
-- Altere as variaveis BANCO, SENHA , LOGIN, SERVIDOR
-- Repita isso nos 2 arquivos
-
+1. Instale o python 3.6+
+2. Clone ou baixe os arquivos
+3. Execute o script Admin.py dentro de gerenciamento
+ - Navegue até ele: cd "caminho da pasta"/gerenciamento
+ - python Admin.py
+4. Registre as faculdades, cursos e eventos
 5. PRONTO! Execute o comando python home.py na pasta dos arquivos
+ - cd "caminho da pasta"
+ - python Home.py
 
 
 
-*OBSERVAÇÕES:
-- Para conectar remotamente o programa utiliza a porta 1433
