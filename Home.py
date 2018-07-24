@@ -53,6 +53,7 @@ class Home(object):
         Presenca(self,self.cur)
 
     def conectarBanco(self):
+        #con = sqlite3.connect('dados.db')
         con = sqlite3.connect('dados.db')
         return con.cursor()
 

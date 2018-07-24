@@ -1,5 +1,4 @@
 from tkinter import *
-import pyodbc
 from auxiliares import tratarResultado, isNumber
 from PIL import Image, ImageTk
 from tkinter import messagebox
@@ -105,8 +104,8 @@ class Presenca(Toplevel):
             dado = veri.fetchone()
             if not dado:
                 messagebox.showinfo("Alerta", "Voce não está inscrito nesse evento")
-            elif (datetime.now().time() >= self.getHora('inicio')) and (self.getHora('final') <= datetime.now().time()):
-                self.cur.execute('update %s set checkin=1 where "%s".id_aluno = %i' % (
+            elif (datetime.now().time() >= self.getHora('inicio')) and (self.getHora('final') <= datetime.now().time()) and (datetime.now().date() == self.getDia()):
+                self.cur.execute('update %s set checkin=1 where "%s".aluno = %i' % (
                     self.variavel.get(), self.variavel.get(), self.matricula))
                 self.cur.execute("commit")
                 messagebox.showinfo("Sucesso", "Checkin realizado com sucesso")
@@ -129,7 +128,7 @@ class Presenca(Toplevel):
             checkin = self.cur.execute('select checkin from "%s"'%self.variavel.get()).fetchone()
             if not dado:
                 messagebox.showinfo("Alerta", "Voce não está inscrito nesse evento")
-            elif datetime.now().time() < self.getHora('final') and checkin[0]:
+            elif (datetime.now().time() < self.getHora('final')) and checkin[0] and (datetime.now().date() == getDia()):
                 self.cur.execute('update "%s" set checkout=1 where "%s".aluno = %i' % (
                     self.variavel.get(), self.variavel.get(), self.matricula))
                 self.cur.execute("commit")
@@ -144,7 +143,7 @@ class Presenca(Toplevel):
             messagebox.showinfo("Alerta","Selecione um evento")
             raise e
 
-    
+
     def getEventos(self):
         try:
             eventos = self.cur.execute("select nome from Eventos").fetchall()
@@ -152,6 +151,12 @@ class Presenca(Toplevel):
         except:
             log = open("logerro.txt", 'w')
             log.write("Erro com conexao banco ao listar eventos")
+
+    def getDia():
+
+        query = self.cur.execute('select data from eventos where nome =  "%s"'%self.variavel.get()).fetchone()[0]
+        data = datetime.strptime(query,'%d/%m/%Y').date()
+        return data
 
     def getHora(self,fim_or_inicio):
         resultado = self.cur.execute("select %s "
