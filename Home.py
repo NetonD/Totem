@@ -2,11 +2,8 @@ from tkinter import  *
 from PIL import Image,ImageTk
 from Presenca import *
 from Inscricao import *
+import sqlite3
 
-LOGIN = "Neto"
-SENHA = "Almir@lves123"
-SERVIDOR = "totem-bd.database.windows.net"
-BANCO = "BD_TOTEM"
 
 class Home(object):
 
@@ -19,8 +16,8 @@ class Home(object):
         self.img = []
         self.cur = self.conectarBanco()
 
-        
-        
+
+
         self.img.append(ImageTk.PhotoImage(Image.open('imagens\\fundo_sem_icone2.png').resize((940,780),Image.ANTIALIAS)))
         Label(self.root, image=self.img[0]).place(x=0, y=0,relwidth=1)
         btn_inscricao = self.make_button_img(self.root,200,200,"imagens\\inscricao.png",self.open_inscricao,1,0)
@@ -56,7 +53,7 @@ class Home(object):
         Presenca(self,self.cur)
 
     def conectarBanco(self):
-        con = pyodbc.connect('DRIVER={SQL Server};SERVER='+str(SERVIDOR)+';PORT=1433;DATABASE='+str(BANCO)+';UID='+str(LOGIN)+';PWD='+str(SENHA)+';')
+        con = sqlite3.connect('dados.db')
         return con.cursor()
 
 root= Tk()

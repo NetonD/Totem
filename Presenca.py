@@ -4,10 +4,7 @@ from auxiliares import tratarResultado, isNumber
 from PIL import Image, ImageTk
 from tkinter import messagebox
 from datetime import datetime
-LOGIN = "Neto"
-SENHA = "Almir@lves123"
-SERVIDOR = "totem-bd.database.windows.net"
-BANCO = "BD_TOTEM"
+
 class Presenca(Toplevel):
     def __init__(self, original,curs):
         self.original_frame = original
@@ -29,7 +26,7 @@ class Presenca(Toplevel):
         ####### Label
         lbl_matricula = Label(self, text="Matrícula:", font="Arial, 18").grid(column=1, row=1, sticky=W)
         lbl_nome = Label(self, text="Nome:", font="Arial, 18", pady=5).grid(column=1, row=4, columnspan=3, sticky=W)
-        lbl_facul = Label(self, text="Instituição:", font="Arial, 18").grid(column=1, row=6, columnspan=1, sticky=W)
+        lbl_facul = Label(self, text="instituicao:", font="Arial, 18").grid(column=1, row=6, columnspan=1, sticky=W)
         lbl_curso = Label(self, text="Curso:", font="Arial, 18").grid(column=2, row=6, columnspan=2, sticky=W,padx=85)
         lbl_evento = Label(self, text="Evento:", font="Arial, 18", pady=5).grid(column=1, row=8, columnspan=3, sticky=W)
 
@@ -72,16 +69,16 @@ class Presenca(Toplevel):
 
         ####### Button
         btn_checkin = self.make_button_img(120, 40, "imagens\\botao_checkin.png", self.checkin, 0, 1, 10, W)
-        btn_checkout = self.make_button_img(120, 40, "imagens\\botao_checkin.png", self.checkout, 1, 3, 10, W)
+        btn_checkout = self.make_button_img(120, 40, "imagens\\checkout_button.png", self.checkout, 1, 3, 10, W)
         btn_cancel = self.make_button_img(120, 40, "imagens\\botao_cancelar.png", self.onClose, 2, 2, 10, W)
         btn_buscar = self.make_button_img(120, 40, "imagens\\botao_buscar.png", self.completarCampos, 3, 3, 1, W)
 
     def buscar(self):
-        aluno = self.cur.execute("select Alunos.nome,Instituição.nome,cursos.nome "
-                                 "from Alunos, Instituição,cursos "
-                                 "where Alunos.id_instituição = Instituição.id_faculdade "
-                                 "and Alunos.id_cursos = cursos.id_curso "
-                                 "and Alunos.matricula = %i" % int(self.varMatricula.get())).fetchall()
+        aluno = self.cur.execute("select Alunos.nome,instituicao.nome_faculdade,cursos.nome "
+                                 "from Alunos, instituicao,cursos "
+                                 "where Alunos.faculdade = instituicao.id "
+                                 "and Alunos.curso = cursos.id "
+                                 "and Alunos.matricula = %s; "% self.varMatricula.get()).fetchall()
         self.matricula = int(self.varMatricula.get())
         return aluno[0]
 
@@ -96,20 +93,19 @@ class Presenca(Toplevel):
 
         except ValueError:
             messagebox.showinfo("Alerta", "Insira somente numeros")
-        except:
+        except Exception as e:
             messagebox.showinfo("Alerta", "Campo obrigatorio para busca.\nVerifique e tente novamente!")
-
+            raise e
     def checkin(self):
         try:
             if self.variavel.get() == "Nenhum Selecionado": raise Exception
-            print('kkkkk')
-            veri = self.cur.execute('select "%s".id_aluno '
+            veri = self.cur.execute('select "%s".aluno '
                                     'from alunos,"%s" '
-                                    'where "%s".id_aluno = %i' % (self.variavel.get(), self.variavel.get(), self.variavel.get(), self.matricula))
+                                    'where "%s".aluno = %i' % (self.variavel.get(), self.variavel.get(), self.variavel.get(), self.matricula))
             dado = veri.fetchone()
             if not dado:
                 messagebox.showinfo("Alerta", "Voce não está inscrito nesse evento")
-            elif datetime.now().time() > self.getHora('inicio'):
+            elif (datetime.now().time() >= self.getHora('inicio')) and (self.getHora('final') <= datetime.now().time()):
                 self.cur.execute('update %s set checkin=1 where "%s".id_aluno = %i' % (
                     self.variavel.get(), self.variavel.get(), self.matricula))
                 self.cur.execute("commit")
@@ -121,19 +117,20 @@ class Presenca(Toplevel):
             messagebox.showinfo("Alerta","Contate suporte")
         except Exception as e:
             messagebox.showinfo("Alerta","Selecione um evento")
-            print(e)
+            raise e
 
     def checkout(self):
         try:
             if self.variavel.get() == 'Nenhum Selecionado': raise Exception
-            veri = self.cur.execute('select "%s".id_aluno '
+            veri = self.cur.execute('select "%s".aluno '
                                     'from alunos,"%s" '
-                                    'where "%s".id_aluno = %i' % (self.variavel.get(), self.variavel.get(), self.variavel.get(), self.matricula))
+                                    'where "%s".aluno = %i' % (self.variavel.get(), self.variavel.get(), self.variavel.get(), self.matricula))
             dado = veri.fetchone()
+            checkin = self.cur.execute('select checkin from "%s"'%self.variavel.get()).fetchone()
             if not dado:
                 messagebox.showinfo("Alerta", "Voce não está inscrito nesse evento")
-            elif datetime.now().time() < self.getHora('final'):
-                self.cur.execute('update "%s" set checkout=1 where "%s".id_aluno = %i' % (
+            elif datetime.now().time() < self.getHora('final') and checkin[0]:
+                self.cur.execute('update "%s" set checkout=1 where "%s".aluno = %i' % (
                     self.variavel.get(), self.variavel.get(), self.matricula))
                 self.cur.execute("commit")
                 messagebox.showinfo("Sucesso","Checkout realizado com sucesso")
@@ -145,8 +142,9 @@ class Presenca(Toplevel):
             print(e)
         except Exception as e:
             messagebox.showinfo("Alerta","Selecione um evento")
+            raise e
 
-    #################################### FAZER BUTTON CHECKOUT
+    
     def getEventos(self):
         try:
             eventos = self.cur.execute("select nome from Eventos").fetchall()
@@ -155,19 +153,13 @@ class Presenca(Toplevel):
             log = open("logerro.txt", 'w')
             log.write("Erro com conexao banco ao listar eventos")
 
-    def getHora(self,ficio):
-        hora = self.cur.execute("select hora_%s "
+    def getHora(self,fim_or_inicio):
+        resultado = self.cur.execute("select %s "
                                 "from eventos "
-                                "where nome = '%s'" % (ficio,self.variavel.get())).fetchone()
-        
-        hora = hora[0].split(':')
-        hora[2] = hora[2].split('.')
-        del hora[2][1]
-        hora[2] = hora[2][0]
-        
-        hora = hora[0]+':'+ hora[1] + ':' + hora[2]
-        
-        return datetime.strptime(hora,'%H:%M:%S').time()
+                                "where nome = '%s'" % (fim_or_inicio,self.variavel.get())).fetchone()
+
+        return datetime.strptime(resultado[0],'%H:%M').time()
+
     def make_button_img(self, w, h, url, func, pos, col, row, alinhamento):
         self.arq = Image.open(url).resize((w, h), Image.ANTIALIAS)
         self.img.append(ImageTk.PhotoImage(self.arq))

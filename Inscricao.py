@@ -3,19 +3,14 @@ import pyodbc
 from PIL import Image,ImageTk
 from tkinter import messagebox
 from auxiliares import tratarResultado,string2int
-
-#PRETENDO DEIXAR ISSO MAIS FACIL PARA INSTALAÇÃO
-LOGIN = "Neto"
-SENHA = "Almir@lves123"
-SERVIDOR = "totem-bd.database.windows.net"
-BANCO = "BD_TOTEM"
+from win32api import GetSystemMetrics
 
 class Inscricao(Toplevel):
     def __init__(self,original,curs):
         self.original_frame = original
         Toplevel.__init__(self)
         self.title("Inscricao")
-        self.geometry("940x780+30+30")
+        self.geometry("940x780+{}+0".format(int(GetSystemMetrics(0)*1/7))) #pega 1/7 do ecrâ e coloca na esquerda
         self.img = []
         self.arq = None
         self.cur = curs
@@ -28,7 +23,7 @@ class Inscricao(Toplevel):
         #self.wm_attributes("-topmost", True)
         #self.wm_attributes("-transparentcolor", "somecolor")
 
-        
+
 
         ######## Label
 
@@ -36,7 +31,7 @@ class Inscricao(Toplevel):
         Label(self,text="Email:",font="Arial, 18").grid(column=1,row=2,sticky=W,columnspan=2)
         Label(self,text="Matricula:",font="Arial, 18").grid(column=1,row=4,sticky=W)
         Label(self,text="Telefone:",font="Arial, 18").grid(column=2,row=4,sticky=W,padx=14)
-        Label(self,text="Instituição:",font="Arial, 18").grid(column=1,row=6,sticky=W)
+        Label(self,text="instituicao:",font="Arial, 18").grid(column=1,row=6,sticky=W)
         Label(self,text="Curso:",font="Arial, 18").grid(column=1,row=8,sticky=W)
         Label(self,text="Eventos:",font="Arial, 18").grid(column=1,row=10,sticky=W)
 
@@ -54,13 +49,13 @@ class Inscricao(Toplevel):
         ent_celular = Entry(self,width=17, font="Arial, 20",textvariable=self.varCelular).grid(row=5,column=2,stick=W,padx=14)
 
         ######## Buttons
-        btn_cancel = self.make_button_img(160,95,"imagens\\botao_cancelar.png",self.onClose,0,1,12,W)
-        btn_concluir = self.make_button_img(160,96,"imagens\\botao_confirmar.png",self.cadastrar,1,2,12,E)
+        btn_cancel = self.make_button_img(160,50,"imagens\\botao_cancelar.png",self.onClose,0,1,12,W)
+        btn_concluir = self.make_button_img(160,50,"imagens\\botao_confirmar.png",self.cadastrar,1,2,12,E)
 
         ######## Lista insttituições
 
         self.variavel = StringVar(self)
-        self.variavel.set("Ruy Barbosa")
+        self.variavel.set("Ruy Barbosa RV")
         resposta = {str(i) for i in tratarResultado(self.getFaculdade())}
         menuOption = OptionMenu(self,self.variavel,*resposta)
         menuOption.config(font=("Arial",15),width=37) #LETRA DO MENU
@@ -108,8 +103,8 @@ class Inscricao(Toplevel):
             cursos = self.cur.execute("select nome from Cursos").fetchall()
             return cursos
         except:
-            log = open("logerro.txt",'rb')
-            log.write("Erro com conexao banco ao listar cursos")
+            with open("logero.txt",'a+') as log:
+                log.write("Erro com conexao banco ao listar cursos")
 
 
     def getEventos(self):
@@ -117,18 +112,18 @@ class Inscricao(Toplevel):
             eventos = self.cur.execute("select nome from Eventos").fetchall()
             return eventos
         except:
-            log = open("logerro.txt",'rb')
-            log.write("Erro com conexao banco ao listar eventos")
+            with open("logerro.txt",'a+') as log:
+                log.write("Erro com conexao banco ao listar eventos\n")
 
 
 
     def getFaculdade(self):
         try:
-            fauldades = self.cur.execute("select nome from Instituição").fetchall()
+            fauldades = self.cur.execute("select nome_faculdade from instituicao").fetchall()
             return fauldades
         except:
-            log = open("logerro.txt",'rb')
-            log.write("Erro com conexao banco ao listar eventos")
+            with open("logerro.txt",'a+') as log:
+                log.write("Erro com conexao banco ao listar faculdades\n")
 
 
     def cadastrar(self):
@@ -145,20 +140,20 @@ class Inscricao(Toplevel):
 
             #con = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server};server="+str(SERVIDOR)+";database="+str(BANCO)+";uid="+str(LOGIN)+";pwd="+str(SENHA))
             #cur = con.cursor()
-            id_curso = tratarResultado(self.cur.execute("select id_curso from cursos where nome = (?)",curso).fetchone())
-            id_facul = tratarResultado(self.cur.execute("select id_faculdade from instituição where nome = (?)",facul).fetchone())
+            id_curso = tratarResultado(self.cur.execute("select id from cursos where nome = (?)",(curso,)).fetchone())
+            id_facul = tratarResultado(self.cur.execute("select id from instituicao where nome_faculdade = (?)",(facul,)).fetchone())
 
             cadastro_aluno =  tratarResultado(self.cur.execute('select matricula from Alunos'))
-            aluno_evento = tratarResultado(self.cur.execute('select id_aluno from "%s"'%evento))
+            aluno_evento = tratarResultado(self.cur.execute('select aluno from "%s"'%evento))
             aluno_evento = string2int(aluno_evento)
             cadastro_aluno = string2int(cadastro_aluno)
 
 
             if not matricula in cadastro_aluno:
-                self.cur.execute("insert into Alunos(nome,email,matricula,telefone,id_instituição,id_cursos) values (?, ?, ?, ?, ?, ?)",(nome,email,matricula,telefone,id_facul[0],id_curso[0]))
+                self.cur.execute("insert into Alunos(nome,email,telefone,matricula,curso,faculdade) values (?, ?, ?, ?, ?, ?)",(nome,email,telefone,matricula,id_curso[0],id_facul[0]))
 
             if not matricula in aluno_evento:
-                self.cur.execute('insert into "%s" values (?,?,0,0)'%evento,matricula,nome)
+                self.cur.execute('insert into "%s" values (?,?,0,0)'%evento,(matricula,nome))
                 self.cur.execute('commit')
                 messagebox.showinfo("Sucesso","Cadastro efetuado com sucesso!")
                 self.onClose()
@@ -173,4 +168,4 @@ class Inscricao(Toplevel):
             messagebox.showinfo("ERRO", "Verifique os campos: Matricula e Telefone")
         except Exception as e:
             messagebox.showinfo("ERRO","Não pode haver campos vazios")
-            print(e)
+            raise e

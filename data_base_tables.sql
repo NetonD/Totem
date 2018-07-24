@@ -37,10 +37,12 @@ create table Eventos(
 
 create table "Nome Evento"(
     id_aluno bigint,
+		id_evnto int NOT NULL,
     nome_aluno varchar(50) NOT null,
     checkin bit,
     checkout bit,
-    foreign key(id_aluno) references Alunos
+    foreign key(id_aluno) references Alunos,
+		foreign key (id_evento) references Eventos
 );
 #SOMENTE SE NECESSARIO APLICAR CHAVES NA MÃO
 alter table alunos add foreign key(id_cursos) references Cursos;
