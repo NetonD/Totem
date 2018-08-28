@@ -1,5 +1,4 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+# coding: utf-8
 from tkinter import *
 import sqlite3
 from tkinter import messagebox

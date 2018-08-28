@@ -19,8 +19,13 @@ def executar(nome):
     try:
         app.destroy()
         os.system('python %s.py' % nome.lower().replace(' ','_'))
+
     except Exception as e:
-        print('Arquivo não encontrado')
-        raise e
+        os.system('python3 %s.py' % nome.lower().replace(' ','_'))
+        app.destroy()
+        
+    finally:
+    	print('Não esqueça de verificar o nome para executar python: 1)python ou 2) python3')
+
 
 app.mainloop()

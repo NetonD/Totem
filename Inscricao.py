@@ -1,5 +1,5 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+# coding: utf-8
+
 from tkinter import *
 from PIL import Image,ImageTk
 from tkinter import messagebox
