@@ -4,14 +4,13 @@ from tkinter import *
 from PIL import Image,ImageTk
 from tkinter import messagebox
 from auxiliares import tratarResultado,string2int
-from win32api import GetSystemMetrics
 
 class Inscricao(Toplevel):
     def __init__(self,original,curs):
         self.original_frame = original
         Toplevel.__init__(self)
         self.title("Inscricao")
-        self.geometry("940x780+{}+0".format(int(GetSystemMetrics(0)*1/7))) #pega 1/7 do ecrâ e coloca na esquerda
+        self.geometry("940x780+10+10") #pega 1/7 do ecrâ e coloca na esquerda
         self.img = []
         self.arq = None
         self.cur = curs
