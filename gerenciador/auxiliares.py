@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 def tratarResultado(ob):
     lista = []
     for row in ob:

@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8  -*-
 from tkinter import *
 from auxiliares import tratarResultado, isNumber
 from PIL import Image, ImageTk

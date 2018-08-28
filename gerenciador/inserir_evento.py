@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from tkinter import *
 import sqlite3
 from auxiliares import tratarResultado
