@@ -55,7 +55,7 @@ class Inscricao(Toplevel):
         ######## Lista insttituições
 
         self.variavel = StringVar(self)
-        self.variavel.set("Ruy Barbosa RV")
+        self.variavel.set("Selecione sua IES")
         resposta = {str(i) for i in tratarResultado(self.getFaculdade())}
         menuOption = OptionMenu(self,self.variavel,*resposta)
         menuOption.config(font=("Arial",15),width=37) #LETRA DO MENU
@@ -66,7 +66,7 @@ class Inscricao(Toplevel):
         ######## Lista de cursos
 
         self.var = StringVar(self)
-        self.var.set("Ciência da computação")
+        self.var.set("Selecione o seu Curso")
         resultado = {str(i) for i in tratarResultado(self.getCursos())}
         listaCurso = OptionMenu(self,self.var,*resultado)
         listaCurso.config(font="Arial, 15",width=37)
