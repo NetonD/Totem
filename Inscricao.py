@@ -31,7 +31,7 @@ class Inscricao(Toplevel):
         Label(self,text="Email:",font="Arial, 18").grid(column=1,row=2,sticky=W,columnspan=2)
         Label(self,text="Matricula:",font="Arial, 18").grid(column=1,row=4,sticky=W)
         Label(self,text="Telefone:",font="Arial, 18").grid(column=2,row=4,sticky=W,padx=14)
-        Label(self,text="instituicao:",font="Arial, 18").grid(column=1,row=6,sticky=W)
+        Label(self,text="Instituicao:",font="Arial, 18").grid(column=1,row=6,sticky=W)
         Label(self,text="Curso:",font="Arial, 18").grid(column=1,row=8,sticky=W)
         Label(self,text="Eventos:",font="Arial, 18").grid(column=1,row=10,sticky=W)
 
@@ -77,7 +77,7 @@ class Inscricao(Toplevel):
         ######### Lista Eventos
 
         self.variable = StringVar(self)
-        self.variable.set("Nenhum selecionado")
+        self.variable.set("Nenhum evento selecionado")
         consulta = {str(j) for j in tratarResultado(self.getEventos())}
         listaEvento = OptionMenu(self,self.variable,*consulta) #NÃO FUNCIONA SE TABELA TIVER VAZIA
         listaEvento.config(width=37,font="Arial, 15")
